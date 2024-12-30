@@ -8,25 +8,17 @@ The Directory Content Compiler is a Go-based tool that walks through a directory
 
 - Compile content from multiple files into a single document
 - Filter directories based on prefix
-- Exclude specific paths
-- Respect .gitignore rules
+- Include or exclude specific paths (with wildcard support)
+- Include or exclude specific file extensions
 - Customizable output file name
 - Command-line interface for easy use and integration
-- File content breakpoints for improved readability
+- Debug logging for troubleshooting
 
 ## Installation
 
 ### Prerequisites
 
 Ensure you have Go installed on your system. If not, download and install it from [golang.org](https://golang.org/).
-
-### Installing Dependencies
-
-Install the required dependency:
-
-```
-go get github.com/sabhiram/go-gitignore
-```
 
 ### Compiling the Executable
 
@@ -42,24 +34,11 @@ go get github.com/sabhiram/go-gitignore
 
    This will create an executable named `dircompile` (or `dircompile.exe` on Windows).
 
-4. (Optional) Move the executable to a directory in your system's PATH to run it from anywhere. For example:
-
-   On Linux/macOS:
-   ```
-   sudo mv dircompile /usr/local/bin/
-   ```
-
-   On Windows, you can create a new directory for your custom executables, add it to your PATH, and move the executable there.
+4. (Optional) Move the executable to a directory in your system's PATH to run it from anywhere.
 
 ## Usage
 
-If you've added the executable to your PATH, you can run it from anywhere:
-
-```
-dircompile [options]
-```
-
-Otherwise, run it from the directory where it's located:
+Run the compiler using the following command:
 
 ```
 ./dircompile [options]
@@ -70,49 +49,71 @@ Otherwise, run it from the directory where it's located:
 - `-dir`: Specify the directory to compile (default: current directory)
 - `-output`: Set the output file name (default: "compiled_content.md")
 - `-prefix`: Filter directories by prefix
-- `-exclude`: Comma-separated list of paths to exclude (default: "node_modules")
-- `-gitignore`: Use .gitignore rules (default: true)
+- `-include`: Comma-separated list of paths to include (supports * wildcard)
+- `-exclude`: Comma-separated list of paths to exclude (supports * wildcard, default: "node_modules,.git")
+- `-include-ext`: Comma-separated list of file extensions to include
+- `-exclude-ext`: Comma-separated list of file extensions to exclude (default: common binary and multimedia extensions)
+- `-debug`: Enable debug logging (default: false)
 
 ### Examples
 
 1. Compile the current directory:
    ```
-   dircompile
+   ./dircompile
    ```
 
 2. Compile a specific directory:
    ```
-   dircompile -dir="/path/to/your/directory"
+   ./dircompile -dir="/path/to/your/directory"
    ```
 
 3. Compile only directories starting with "email-":
    ```
-   dircompile -prefix="email-"
+   ./dircompile -prefix="email-"
    ```
 
-4. Specify a custom output file:
+4. Include only specific paths:
    ```
-   dircompile -output="my_compilation.txt"
-   ```
-
-5. Exclude specific directories:
-   ```
-   dircompile -exclude="node_modules,.git,vendor"
+   ./dircompile -include="*/src/*,*/lib/*"
    ```
 
-6. Disable .gitignore rules:
+5. Exclude specific paths:
    ```
-   dircompile -gitignore=false
+   ./dircompile -exclude="*/test/*,*/vendor/*"
    ```
 
-7. Combine multiple options:
+6. Include only specific file types:
    ```
-   dircompile -dir="/path/to/your/directory" -prefix="email-" -output="email_services.md" -exclude="node_modules,.git,vendor" -gitignore=true
+   ./dircompile -include-ext=".go,.js,.ts"
+   ```
+
+7. Exclude specific file types:
+   ```
+   ./dircompile -exclude-ext=".jpg,.png,.pdf"
+   ```
+
+8. Combine multiple options:
+   ```
+   ./dircompile -dir="/path/to/your/directory" -prefix="email-" -include="*/src/*" -exclude="*/test/*" -include-ext=".go,.js" -exclude-ext=".jpg,.png" -output="email_services.md" -debug
    ```
 
 ## Output
 
-The tool generates a single file (default: `compiled_content.md`) containing the content of all compiled files. Each file's content is preceded by a header indicating its relative path within the compiled directory.
+The tool generates a single file (default: `compiled_content.md`) containing the content of all compiled files. Each file's content is wrapped with start and end markers that include the relative file path:
+
+```
+--- path/to/filename.ext start ---
+...
+file contents
+...
+--- path/to/filename.ext end ---
+```
+
+This format provides clear separation between files and makes it easy to identify the source of each piece of content.
+
+## Debugging
+
+If you encounter any issues or unexpected behavior, you can use the `-debug` flag to enable detailed logging of the compilation process. This will show you which paths are being checked, which are being included or excluded, and which files are being added to the compilation.
 
 ## Contributing
 
