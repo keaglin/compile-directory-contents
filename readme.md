@@ -47,7 +47,7 @@ Run the compiler using the following command:
 ### Options
 
 - `-dir`: Specify the directory to compile (default: current directory)
-- `-output`: Set the output file name (default: "compiled_content.md")
+- `-output`: Set the output file name (default: "compiled_content.md"). Supports both relative and absolute paths. Parent directories will be created automatically if they don't exist.
 - `-prefix`: Filter directories by prefix
 - `-include`: Comma-separated list of paths to include (supports * wildcard)
 - `-exclude`: Comma-separated list of paths to exclude (supports * wildcard, default: "node_modules,.git")
@@ -92,10 +92,20 @@ Run the compiler using the following command:
    ./dircompile -exclude-ext=".jpg,.png,.pdf"
    ```
 
-8. Combine multiple options:
+8. Specify output with absolute path:
    ```
-   ./dircompile -dir="/path/to/your/directory" -prefix="email-" -include="*/src/*" -exclude="*/test/*" -include-ext=".go,.js" -exclude-ext=".jpg,.png" -output="email_services.md" -debug
+   ./dircompile -output="/home/user/documents/output.md"
    ```
+
+9. Output to a new subdirectory (will be created automatically):
+   ```
+   ./dircompile -output="docs/compiled/output.md"
+   ```
+
+10. Combine multiple options:
+    ```
+    ./dircompile -dir="/path/to/your/directory" -prefix="email-" -include="*/src/*" -exclude="*/test/*" -include-ext=".go,.js" -exclude-ext=".jpg,.png" -output="/absolute/path/to/email_services.md" -debug
+    ```
 
 ## Output
 

@@ -142,6 +142,12 @@ func compileDirectoryContent(dirPath string, options CompilerOptions) error {
 		return fmt.Errorf("no matching files found")
 	}
 
+	// Create parent directories if they don't exist
+	outputDir := filepath.Dir(options.OutputFileName)
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %v", err)
+	}
+
 	return os.WriteFile(options.OutputFileName, []byte(compiledContent.String()), 0644)
 }
 
